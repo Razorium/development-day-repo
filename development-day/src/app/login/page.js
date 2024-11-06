@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 
 const LoginPage = () => {
@@ -10,6 +11,7 @@ const LoginPage = () => {
 		password: "",
 	});
 	const [errors, setErrors] = useState({});
+	const router = useRouter();
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
@@ -36,12 +38,12 @@ const LoginPage = () => {
 		if (!validate()) return;
 
 		try {
-			const response = await axios.get("/api/tarik", formData);
-			console.log("jklsdlkdajkd");
+			const response = await axios.post("/api/tarik", formData);
 			console.log("User logged in:", response.data);
-			console.log(response.data.familyName);
 			// Redirect to dashboard or home page
-			router.push("/filter");
+			router.push(
+				`/filter?occupation=${response.data.occupation}&givenName=${response.data.givenName}`
+			);
 		} catch (error) {
 			console.error("Login error:", formData);
 			alert("Login failed. Please check your email and password.");
