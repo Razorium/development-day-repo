@@ -40,9 +40,6 @@ const SelectImages = () => {
 			imagesToPush = imagesToPush + selectedImages[i] + ", ";
 		}
 
-		console.log(imagesToPush);
-		console.log(userId);
-
 		const toSend = { userId, imagesToPush };
 
 		try {

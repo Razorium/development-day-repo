@@ -4,32 +4,17 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function POST(request) {
+export async function GET(request) {
 	try {
 		const body = await request.json();
 
-		const {
-			familyName,
-			givenName,
-			email,
-			age,
-			country,
-			password,
-			occupation,
-			university,
-		} = body;
+		const { email, password } = body;
 
 		// Create a new user in the database
-		const newUser = await prisma.user.create({
-			data: {
-				familyName,
-				givenName,
-				email,
-				age: parseInt(age),
-				country,
-				password,
-				occupation,
-				university,
+		const newUser = await prisma.user.findUnique({
+			where: {
+				email: email,
+				password: password,
 			},
 		});
 
