@@ -4,18 +4,20 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function POST(req, res) {
+export async function POST(request) {
 	try {
+		const body = await request.json();
+
 		const {
 			familyName,
 			givenName,
 			email,
 			age,
 			country,
-			phoneNumber,
+			password,
 			occupation,
 			university,
-		} = req.body;
+		} = body;
 
 		// Create a new user in the database
 		const newUser = await prisma.user.create({
@@ -25,9 +27,9 @@ export async function POST(req, res) {
 				email,
 				age: parseInt(age),
 				country,
-				phoneNumber,
+				password,
 				occupation,
-				university: occupation === "student" ? university : null,
+				university,
 			},
 		});
 

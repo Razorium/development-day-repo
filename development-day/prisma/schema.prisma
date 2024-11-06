@@ -20,7 +20,7 @@ model User{
   email String @unique
   age Int
   country String
-  phoneNumber String
+  password String
   occupation String
   university String?
 }
