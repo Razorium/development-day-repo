@@ -42,7 +42,7 @@ const LoginPage = () => {
 			console.log("User logged in:", response.data);
 			// Redirect to dashboard or home page
 			router.push(
-				`/filter?occupation=${response.data.occupation}&givenName=${response.data.givenName}`
+				`/filter?occupation=${response.data.occupation}&givenName=${response.data.givenName}&preference=${response.data.preference}`
 			);
 		} catch (error) {
 			console.error("Login error:", formData);
