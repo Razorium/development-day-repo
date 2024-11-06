@@ -54,7 +54,9 @@ const LoginPage = () => {
 		try {
 			const response = await axios.post("/api/register", formData);
 			console.log("User registered:", response.data);
+			const userId = response.data.id;
 			// Redirect to a success page or dashboard
+			router.push(`/interest?userId=${userId}`);
 		} catch (error) {
 			console.error("Registration error:", error);
 			// Handle error appropriately
@@ -71,7 +73,7 @@ const LoginPage = () => {
 	return (
 		<div
 			className="flex items-center justify-center min-h-screen bg-no-repeat bg-cover"
-			style={{ backgroundImage: 'url("loginbg.jpg")' }}
+			style={{ backgroundImage: 'url("/frontend_img/signinimg.jpg")' }}
 		>
 			<div className="p-8 bg-white rounded-lg shadow-lg max-w-md w-full space-y-4">
 				<h2 className="text-2xl font-bold text-blue-600">
