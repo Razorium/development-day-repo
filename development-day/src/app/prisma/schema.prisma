@@ -1,5 +1,7 @@
+// prisma/schema.prisma
+
 datasource db {
-  provider = "postgresql" // or your preferred database
+  provider = "postgresql" // or your chosen database
   url      = env("DATABASE_URL")
 }
 
@@ -8,13 +10,34 @@ generator client {
 }
 
 model User {
-  id          Int     @id @default(autoincrement())
-  familyName  String
-  givenName   String
-  email       String  @unique
-  age         Int
-  country     String
-  phoneNumber String
-  occupation  String
-  university  String?
+  id            Int             @id @default(autoincrement())
+  familyName    String
+  givenName     String
+  email         String          @unique
+  age           Int
+  country       String
+  phoneNumber   String
+  occupation    String
+  university    String?
+  createdAt     DateTime        @default(now())
+  selections    UserSelection[]
+}
+
+model Image {
+  id          Int             @id @default(autoincrement())
+  description String
+  url         String          // URL to the image or placeholder
+  createdAt   DateTime        @default(now())
+  selections  UserSelection[]
+}
+
+model UserSelection {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  image     Image    @relation(fields: [imageId], references: [id])
+  imageId   Int
+  createdAt DateTime @default(now())
+
+  @@unique([userId, imageId])
 }
