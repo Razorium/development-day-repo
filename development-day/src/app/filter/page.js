@@ -3,9 +3,13 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 
 const FilterPage = () => {
 	const router = useRouter();
+	const searchParams = useSearchParams();
+	const givenName = searchParams.get("givenName");
+	const occupation = searchParams.get("occupation");
 	const [selectedContinent, setSelectedContinent] = useState("");
 	const [selectedCountry, setSelectedCountry] = useState("");
 	const [selectedDuration, setSelectedDuration] = useState("");
@@ -69,7 +73,7 @@ const FilterPage = () => {
 	const handleGenerate = () => {
 		if (selectedCountry && selectedDuration) {
 			router.push(
-				`/results?continent=${selectedContinent}&country=${selectedCountry}&duration=${selectedDuration}`
+				`/itinerary?continent=${selectedContinent}&country=${selectedCountry}&duration=${selectedDuration}&givenName=${givenName}&occupation=${occupation}`
 			);
 		} else {
 			alert("Please select both a country and trip duration before generating");

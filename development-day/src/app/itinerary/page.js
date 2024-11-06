@@ -2,48 +2,45 @@
 
 import { useEffect, useState } from "react";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import axios from "axios";
+import { useSearchParams } from "next/navigation";
 
-export default function ItineraryPage({ country, duration }) {
+export default function ItineraryPage() {
   const [itinerary, setItinerary] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [userData, setUserData] = useState(null);
+  const searchParams = useSearchParams();
+  
+  const givenName = searchParams.get("givenName");
+  const occupation = searchParams.get("occupation");
+  const country = searchParams.get("country");
+  const duration = searchParams.get("duration");
+  const preference = searchParams.get("preference");
 
   const MODEL_NAME = "gemini-1.5-flash-002";
   const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await axios.get('/api/users/1');
-        const data = response.data;
-        setUserData(data);
-      } catch (err) {
-        console.error("Failed to fetch user data:", err.message);
-        setError("Failed to fetch user data");
-      }
-    };
-
-    fetchUserData();
-  }, []);
-
-  useEffect(() => {
     const generateItinerary = async () => {
-      if (!userData) return;
+      if (!occupation || !country || !duration) return;
 
       try {
         setLoading(true);
         
         const model = genAI.getGenerativeModel({ model: MODEL_NAME });
 
-        const prompt = `Create a detailed day-by-day itinerary for a ${duration}-day trip to ${country}. 
-          The traveler works as a ${userData.occupation}. Include:
-          - Daily activities and attractions
-          - Recommended restaurants
-          - Travel tips specific to the location
+        const prompt = `Create a personalized ${duration}-day itinerary for ${givenName} visiting ${country}.
+          About ${givenName}:
+          - Works as a ${occupation}
+          - Has interests in: ${preference}
+
+          Please include:
+          - Daily activities and attractions aligned with their interests
+          - Recommended restaurants and local cuisine
+          - Travel tips specific to ${country}
           - Estimated timing for each activity
-          Please format it in a clear, readable way.`;
+          - Estimated budget for the trip
+          
+          Format the itinerary in a clear, readable way with day-by-day breakdown.`;
 
         const result = await model.generateContent(prompt);
         const response = await result.response;
@@ -57,10 +54,8 @@ export default function ItineraryPage({ country, duration }) {
       }
     };
 
-    if (userData?.occupation) {
-      generateItinerary();
-    }
-  }, [userData, country, duration]);
+    generateItinerary();
+  }, [occupation, country, duration, givenName, preference]);
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
