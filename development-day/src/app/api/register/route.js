@@ -14,7 +14,7 @@ export async function POST(request) {
 			email,
 			age,
 			country,
-			phoneNumber,
+			password,
 			occupation,
 			university,
 		} = body;
@@ -27,7 +27,7 @@ export async function POST(request) {
 				email,
 				age: parseInt(age),
 				country,
-				phoneNumber,
+				password,
 				occupation,
 				university,
 			},
@@ -35,7 +35,6 @@ export async function POST(request) {
 
 		return new Response(JSON.stringify(newUser), { status: 201 });
 	} catch (error) {
-		console.log("botak");
 		console.error("Failed to register user:", error);
 		return new Response(JSON.stringify({ error: "Unable to register user" }), {
 			status: 500,
