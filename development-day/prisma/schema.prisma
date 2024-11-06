@@ -23,4 +23,5 @@ model User{
   phoneNumber String
   occupation String
   university String?
+  preference String?
 }
