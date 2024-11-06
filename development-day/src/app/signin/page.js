@@ -17,7 +17,6 @@ const LoginPage = () => {
 		password: "",
 		occupation: "",
 		university: "",
-		otherCountry: "",
 	});
 	const [errors, setErrors] = useState({});
 
