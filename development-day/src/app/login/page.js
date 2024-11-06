@@ -55,7 +55,11 @@ const LoginPage = () => {
 
 		try {
 			console.log("ok bro");
-			const response = await axios.post("api/register", formData);
+			const response = await axios.post("api/register", formData, {
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
 			console.log("User registered: ", response.data);
 			// Redirect to a success page or dashboard
 			// router.push("/dashboard");

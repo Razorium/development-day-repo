@@ -4,8 +4,10 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function POST(req, res) {
+export async function POST(request) {
 	try {
+		const body = await request.json();
+
 		const {
 			familyName,
 			givenName,
@@ -15,7 +17,7 @@ export async function POST(req, res) {
 			phoneNumber,
 			occupation,
 			university,
-		} = req.body;
+		} = body;
 
 		// Create a new user in the database
 		const newUser = await prisma.user.create({
@@ -27,12 +29,13 @@ export async function POST(req, res) {
 				country,
 				phoneNumber,
 				occupation,
-				university: occupation === "student" ? university : null,
+				university,
 			},
 		});
 
 		return new Response(JSON.stringify(newUser), { status: 201 });
 	} catch (error) {
+		console.log("botak");
 		console.error("Failed to register user:", error);
 		return new Response(JSON.stringify({ error: "Unable to register user" }), {
 			status: 500,
