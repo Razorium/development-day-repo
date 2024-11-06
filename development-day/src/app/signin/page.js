@@ -54,7 +54,9 @@ const LoginPage = () => {
 		try {
 			const response = await axios.post("/api/register", formData);
 			console.log("User registered:", response.data);
+			const userId = response.data.id;
 			// Redirect to a success page or dashboard
+			router.push(`/interest?userId=${userId}`);
 		} catch (error) {
 			console.error("Registration error:", error);
 			// Handle error appropriately
