@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
@@ -13,6 +13,8 @@ const FilterPage = () => {
 	const [selectedContinent, setSelectedContinent] = useState("");
 	const [selectedCountry, setSelectedCountry] = useState("");
 	const [selectedDuration, setSelectedDuration] = useState("");
+	const [selectedCurrency, setSelectedCurrency] = useState("USD");
+	const [budget, setBudget] = useState("");
 
 	const continents = [
 		"North America",
@@ -23,6 +25,50 @@ const FilterPage = () => {
 	];
 
 	const durations = ["3-day", "5-day", "7-day"];
+
+	const currencies = [
+		{ code: "USD", symbol: "$" },
+		{ code: "EUR", symbol: "€" },
+		{ code: "GBP", symbol: "£" },
+		{ code: "JPY", symbol: "¥" },
+		{ code: "CAD", symbol: "C$" }, // Canadian Dollar
+		{ code: "MXN", symbol: "₱" }, // Mexican Peso
+		{ code: "CRC", symbol: "₡" }, // Costa Rican Colón
+		{ code: "BRL", symbol: "R$" }, // Brazilian Real
+		{ code: "ARS", symbol: "$" }, // Argentine Peso
+		{ code: "PEN", symbol: "S/." }, // Peruvian Sol
+		{ code: "COP", symbol: "$" }, // Colombian Peso
+		{ code: "CNY", symbol: "¥" }, // Chinese Yuan
+		{ code: "KRW", symbol: "₩" }, // South Korean Won
+		{ code: "IDR", symbol: "Rp" }, // Indonesian Rupiah
+		{ code: "AUD", symbol: "A$" }, // Australian Dollar
+		{ code: "NZD", symbol: "NZ$" }, // New Zealand Dollar
+		{ code: "FJD", symbol: "FJ$" }, // Fijian Dollar
+		{ code: "PGK", symbol: "K" }, // Papua New Guinean Kina
+	];
+
+	const countryCurrencyMap = {
+		USA: "USD",
+		Canada: "CAD",
+		Mexico: "MXN",
+		"Costa Rica": "CRC",
+		Brazil: "BRL",
+		Argentina: "ARS",
+		Peru: "PEN",
+		Colombia: "COP",
+		France: "EUR",
+		Germany: "EUR",
+		Italy: "EUR",
+		Spain: "EUR",
+		Japan: "JPY",
+		China: "CNY",
+		"South Korea": "KRW",
+		Indonesia: "IDR",
+		Australia: "AUD",
+		"New Zealand": "NZD",
+		Fiji: "FJD",
+		"Papua New Guinea": "PGK",
+	};
 
 	const countriesByContinent = {
 		"North America": [
@@ -60,23 +106,38 @@ const FilterPage = () => {
 	const handleContinentChange = (e) => {
 		setSelectedContinent(e.target.value);
 		setSelectedCountry("");
+		setSelectedCurrency("USD");
+		setBudget("");
 	};
 
 	const handleCountrySelect = (country) => {
 		setSelectedCountry(country);
+		setSelectedCurrency(countryCurrencyMap[country]);
+		setBudget("");
 	};
 
 	const handleDurationChange = (e) => {
 		setSelectedDuration(e.target.value);
 	};
 
+	const handleBudgetChange = (e) => {
+		setBudget(e.target.value);
+	};
+
+	const getCurrencySymbol = (currencyCode) => {
+		const currency = currencies.find((c) => c.code === currencyCode);
+		return currency ? currency.symbol : "";
+	};
+
 	const handleGenerate = () => {
-		if (selectedCountry && selectedDuration) {
+		if (selectedCountry && selectedDuration && budget) {
 			router.push(
-				`/itinerary?continent=${selectedContinent}&country=${selectedCountry}&duration=${selectedDuration}&givenName=${givenName}&occupation=${occupation}`
+				`/itinerary?continent=${selectedContinent}&country=${selectedCountry}&duration=${selectedDuration}&givenName=${givenName}&occupation=${occupation}&currency=${selectedCurrency}&budget=${budget}`
 			);
 		} else {
-			alert("Please select both a country and trip duration before generating");
+			alert(
+				"Please select a country, trip duration, and budget before generating"
+			);
 		}
 	};
 
@@ -134,30 +195,52 @@ const FilterPage = () => {
 					</div>
 				)}
 
-				<div className="mb-6">
-					<label className="block text-gray-700 mb-2">
-						Select Trip Duration
-					</label>
-					<select
-						value={selectedDuration}
-						onChange={handleDurationChange}
-						className="w-full px-3 py-2 border border-gray-300 rounded mt-1 text-gray-700"
-					>
-						<option value="">Choose trip duration</option>
-						{durations.map((duration) => (
-							<option key={duration} value={duration}>
-								{duration}
-							</option>
-						))}
-					</select>
-				</div>
+				{selectedCountry && (
+					<div className="mb-6">
+						<label className="block text-gray-700 mb-2">
+							Select Trip Duration
+						</label>
+						<select
+							value={selectedDuration}
+							onChange={handleDurationChange}
+							className="w-full px-3 py-2 border border-gray-300 rounded mt-1 text-gray-700"
+						>
+							<option value="">Choose trip duration</option>
+							{durations.map((duration) => (
+								<option key={duration} value={duration}>
+									{duration}
+								</option>
+							))}
+						</select>
+					</div>
+				)}
+
+				{selectedCountry && selectedDuration && (
+					<div className="mb-6">
+						<label className="block text-gray-700 mb-2">
+							Budget ({selectedCurrency})
+						</label>
+						<div className="relative">
+							<span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700">
+								{getCurrencySymbol(selectedCurrency)}
+							</span>
+							<input
+								type="number"
+								value={budget}
+								onChange={handleBudgetChange}
+								placeholder={`Enter budget in ${selectedCurrency}`}
+								className="w-full px-3 py-2 pl-8 border border-gray-300 rounded mt-1 text-gray-700"
+							/>
+						</div>
+					</div>
+				)}
 
 				<div className="flex items-center justify-between">
 					<button
 						onClick={handleGenerate}
-						disabled={!selectedCountry || !selectedDuration}
+						disabled={!selectedCountry || !selectedDuration || !budget}
 						className={`w-full px-4 py-2 rounded transition duration-300 ${
-							selectedCountry && selectedDuration
+							selectedCountry && selectedDuration && budget
 								? "bg-indigo-600 hover:bg-indigo-700 text-white"
 								: "bg-gray-300 cursor-not-allowed text-gray-500"
 						}`}
