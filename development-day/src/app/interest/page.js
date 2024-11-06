@@ -4,18 +4,24 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 const SelectImages = () => {
+	const SearchParams = useSearchParams();
+	const userId = SearchParams.get("userId");
 	const router = useRouter();
 	const [selectedImages, setSelectedImages] = useState([]);
 	const [loading, setLoading] = useState(false);
+	let imagesToPush = "";
 
-	const toggleSelect = (imageId) => {
-		if (selectedImages.includes(imageId)) {
-			setSelectedImages(selectedImages.filter((id) => id !== imageId));
+	const toggleSelect = (imgDesc) => {
+		if (selectedImages.includes(imgDesc)) {
+			setSelectedImages(
+				selectedImages.filter((description) => description !== imgDesc)
+			);
 		} else {
 			if (selectedImages.length < 10) {
-				setSelectedImages([...selectedImages, imageId]);
+				setSelectedImages([...selectedImages, imgDesc]);
 			} else {
 				alert("You can select up to 10 images.");
 			}
@@ -30,21 +36,19 @@ const SelectImages = () => {
 
 		setLoading(true);
 
+		for (let i = 0; i < selectedImages.length; i++) {
+			imagesToPush = imagesToPush + selectedImages[i] + ", ";
+		}
+
+		console.log(imagesToPush);
+		console.log(userId);
+
+		const toSend = { userId, imagesToPush };
+
 		try {
-			const email = localStorage.getItem("userEmail"); // Assuming email is stored in localStorage
-			if (!email) {
-				alert("User not identified. Please register again.");
-				router.push("/");
-				return;
-			}
-
-			const response = await axios.post("/api/select-images", {
-				email,
-				imageIds: selectedImages,
-			});
-
-			console.log("Images selected:", response.data);
-			router.push("/dashboard"); // Redirect to dashboard or next step
+			const response = await axios.put("/api/update", toSend);
+			console.log(response.data);
+			router.push("/"); // Redirect to dashboard or next step
 		} catch (error) {
 			console.error("Error submitting selections:", error);
 			alert("Failed to submit selections. Please try again.");
@@ -211,16 +215,19 @@ const SelectImages = () => {
 			<h1 className="text-3xl font-bold text-center mb-8">
 				Choose Your Preferred Vacation Images
 			</h1>
+			<h2 className="text-xl font-medium text-center mb-8">
+				Select a minimum of 5 images and maximum of 10 images
+			</h2>
 			<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
 				{images.map((image) => (
 					<div
 						key={image.id}
 						className={`relative cursor-pointer border rounded-lg overflow-hidden ${
-							selectedImages.includes(image.id)
+							selectedImages.includes(image.description)
 								? "border-indigo-500"
 								: "border-gray-300"
 						}`}
-						onClick={() => toggleSelect(image.id)}
+						onClick={() => toggleSelect(image.description)}
 					>
 						<img
 							src={image.url}
@@ -230,7 +237,7 @@ const SelectImages = () => {
 						<div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2 text-sm">
 							{image.description}
 						</div>
-						{selectedImages.includes(image.id) && (
+						{selectedImages.includes(image.description) && (
 							<div className="absolute top-0 right-0 bg-indigo-500 text-white rounded-full p-1 m-2">
 								&#10003;
 							</div>
