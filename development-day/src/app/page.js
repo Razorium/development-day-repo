@@ -28,11 +28,11 @@ const HomePage = () => {
 						/>
 					</div>
 					<div className="hidden md:flex space-x-8">
-						<Link href="/signin" legacyBehavior>
+						{/* <Link href="/signin" legacyBehavior>
 							<a className="text-gray-700 hover:text-green-600 transition duration-300">
 								Sign Up
 							</a>
-						</Link>
+						</Link> */}
 						<Link href="/login" legacyBehavior>
 							<a className="text-gray-700 hover:text-green-600 transition duration-300">
 								Log In
@@ -52,9 +52,9 @@ const HomePage = () => {
 						Plan and book your dream vacation with Cathay Travel AI.
 					</p>
 					<div className="flex space-x-4">
-						<Link href="/explore" legacyBehavior>
+						<Link href="/signin" legacyBehavior>
 							<a className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-full hover:bg-blue-700 transition duration-300">
-								Explore
+								Sign Up
 							</a>
 						</Link>
 					</div>
