@@ -9,6 +9,7 @@ const FilterPage = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const givenName = searchParams.get("givenName");
+	const preference = searchParams.get("preference");
 	const occupation = searchParams.get("occupation");
 	const [selectedContinent, setSelectedContinent] = useState("");
 	const [selectedCountry, setSelectedCountry] = useState("");
@@ -132,7 +133,7 @@ const FilterPage = () => {
 	const handleGenerate = () => {
 		if (selectedCountry && selectedDuration && budget) {
 			router.push(
-				`/itinerary?continent=${selectedContinent}&country=${selectedCountry}&duration=${selectedDuration}&givenName=${givenName}&occupation=${occupation}&currency=${selectedCurrency}&budget=${budget}`
+				`/itinerary?continent=${selectedContinent}&country=${selectedCountry}&duration=${selectedDuration}&givenName=${givenName}&occupation=${occupation}&currency=${selectedCurrency}&budget=${budget}&preference=${preference}`
 			);
 		} else {
 			alert(
